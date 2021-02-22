@@ -3,7 +3,6 @@ package com.gjs.antclass.class0005;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Test04 线程池

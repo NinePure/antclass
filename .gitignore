@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+http.proxy=127.0.0.1:8087
+
+http.sslVerify=false
