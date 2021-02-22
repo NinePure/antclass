@@ -1,3 +1,5 @@
+http.sslVerify=false
+http.proxy=127.0.0.1:8087
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
