@@ -29,13 +29,16 @@ public class DisruptorMain {
     public static void main(String[] args) {
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
                 .setNameFormat("demo-pool-%d").build();
-        ExecutorService executor = new ThreadPoolExecutor(4, 4,
+        ExecutorService executor = new ThreadPoolExecutor(2, 3,
                 60L, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<Runnable>(100), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+                new ArrayBlockingQueue<Runnable>(1), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
         EventFactory<LongEvent> myEventFactory = new MyEventFactory();
         int ringBufferSize = 1024 * 1024; // ringBufferSize大小一定要是2的N次方
-        Disruptor<LongEvent> disruptor = new Disruptor<LongEvent>(myEventFactory, ringBufferSize, executor, ProducerType.MULTI,
+        Disruptor<LongEvent> disruptor = new Disruptor<LongEvent>(myEventFactory, ringBufferSize, executor, ProducerType.SINGLE,
                 new YieldingWaitStrategy());
+        disruptor.handleEventsWith(new MyEventHandle());
+        disruptor.handleEventsWith(new MyEventHandle());
+        disruptor.handleEventsWith(new MyEventHandle());
         disruptor.handleEventsWith(new MyEventHandle());
         disruptor.start();
         RingBuffer<LongEvent> ringBuffer = disruptor.getRingBuffer();
@@ -43,15 +46,8 @@ public class DisruptorMain {
         ByteBuffer byteBuffer = ByteBuffer.allocate(8);
         DisruptorMain disruptorMain = new DisruptorMain();
         for (int i = 0; i < 100; i++) {
-            executor.execute(() -> {
-                byteBuffer.putLong(0, disruptorMain.num.getAndIncrement());
-                myEventProducer.onData(byteBuffer);
-            });
-        }
-        try {
-            Thread.sleep(1000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            byteBuffer.putLong(0, disruptorMain.num.getAndIncrement());
+            myEventProducer.onData(byteBuffer);
         }
         disruptor.shutdown();
         executor.shutdown();
