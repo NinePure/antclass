@@ -8,6 +8,8 @@ package com.gjs.antclass.class0007;
  */
 public class Test01 implements Runnable {
 
+    String name;
+
     @Override
     public void run() {
         set();

@@ -23,6 +23,7 @@ public class Test02 extends Thread {
         try {
             lock.lock();
             System.out.println("set");
+
             get();
         } catch (Exception e) {
             e.printStackTrace();
